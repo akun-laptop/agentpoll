@@ -1,44 +1,12 @@
-"use client";
+import PollPageClient from "./PollPageClient";
 
-import { Suspense } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { IS_DEPLOYED } from "@/lib/config";
-import NotDeployed from "@/components/NotDeployed";
-import PollDetail from "@/components/PollDetail";
-
-function DetailInner() {
-  const params = useParams<{ id: string }>();
-  const id = Number(params.id);
-
-  if (!IS_DEPLOYED) return <NotDeployed />;
-
-  if (!Number.isInteger(id) || id < 0) {
-    return (
-      <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-        Invalid poll id.{" "}
-        <Link href="/" className="underline underline-offset-2">
-          Back to all polls
-        </Link>
-      </div>
-    );
-  }
-
-  return <PollDetail id={id} />;
+// Static export (GitHub Pages) needs every dynamic route pre-generated at
+// build time. Polls are numbered from 0, so pre-generate ids 0..49; the
+// client component still reads the id from the URL at runtime.
+export function generateStaticParams() {
+  return Array.from({ length: 50 }, (_, i) => ({ id: String(i) }));
 }
 
 export default function PollPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-3/4 rounded-lg bg-zinc-800" />
-          <div className="h-12 rounded-xl bg-zinc-800" />
-          <div className="h-12 rounded-xl bg-zinc-800" />
-        </div>
-      }
-    >
-      <DetailInner />
-    </Suspense>
-  );
+  return <PollPageClient />;
 }
