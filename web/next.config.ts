@@ -12,6 +12,9 @@ const isStaticExport = process.env.STATIC_EXPORT === "1";
 const staticExportConfig: NextConfig = {
   output: "export",
   basePath: "/agentpoll",
+  // GitHub Pages serves /create/ from create/index.html; without
+  // trailingSlash the export emits flat create.html and /create/ 404s.
+  trailingSlash: true,
   cacheComponents: false,
   partialPrefetching: false,
 };
